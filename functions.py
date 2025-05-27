@@ -13,7 +13,6 @@ def get_google_sheet(sheet_name, worksheet_name):
     client = gspread.authorize(creds)
     sheet = client.open(sheet_name).worksheet(worksheet_name)
     data = sheet.get_all_values()
-
     return sheet, data
 
 
@@ -77,10 +76,8 @@ def confirm_and_update_workflow(df_updated, sheet):
                 sheet.update([df_updated.columns.values.tolist()] + df_updated.values.tolist())
                 st.success("✅ Sheet updated successfully!")
                 st.session_state.edit_mode = True
-                st.session_state.sheet_updated = True
-                # Rerun the app to reflect latest changes
-                
 
+                # Rerun the app to reflect latest changes
 
 #Login function
 
