@@ -7,22 +7,30 @@ from gspread_dataframe import get_as_dataframe
 from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
 import pandas as pd
 
+# To Read google sheet
+
+
+
 def get_google_sheet(sheet_name, worksheet_name):
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("./credentials.json", scope)
+
+    creds_dict = st.secrets["gcp_service_account"]
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+
     client = gspread.authorize(creds)
     sheet = client.open(sheet_name).worksheet(worksheet_name)
     data = sheet.get_all_values()
     return sheet, data
 
 
-
+#Function to calculate week range
 def get_week_range(offset=0):
     today = datetime.today() + timedelta(weeks=offset)
     start = today - timedelta(days=today.weekday())
     end = start + timedelta(days=6)
     return start.date(), end.date()
 
+# Function to create Week Selection button
 def display_week_selector():
     week_offset = st.session_state.get("week_offset", 0)
     
@@ -41,7 +49,7 @@ def display_week_selector():
     return f"{start_date} to {end_date}"  # Can be used as a key or label
 
 
-
+#Function to create tabular column from fetched Google Sheet
 def display_editable_table(data, dropdown_values):
     df = pd.DataFrame(data[1:], columns=data[0])  # Skip header row
     gb = GridOptionsBuilder.from_dataframe(df)
@@ -50,25 +58,24 @@ def display_editable_table(data, dropdown_values):
     for col in df.columns:
         gb.configure_column(col, editable=True, cellEditor='agSelectCellEditor',
                             cellEditorParams={'values': dropdown_values})
-
+    gb.configure_default_column(width=110)
     grid_options = gb.build()
     grid_response = AgGrid(df, gridOptions=grid_options,
                            update_mode=GridUpdateMode.VALUE_CHANGED,
+                           fit_columns_on_grid_load=True,
                            editable=True,
                            height=300)
 
     return pd.DataFrame(grid_response['data'])
 
 
-
+#Function to update changes to Google Sheet
 
 def confirm_and_update_workflow(df_updated, sheet):
     if "edit_mode" not in st.session_state:
         st.session_state.edit_mode = True
 
     if st.session_state.edit_mode:
-        st.write("### 🔍 Preview Updated Table")
-        st.dataframe(df_updated)
 
         col1, col2 = st.columns(2)
         with col1:
@@ -77,18 +84,12 @@ def confirm_and_update_workflow(df_updated, sheet):
                 st.success("✅ Sheet updated successfully!")
                 st.session_state.edit_mode = True
 
-                # Rerun the app to reflect latest changes
 
 #Login function
 
-USER_CREDENTIALS = {
-    "Adwaith": "password123",
-    "user": "testpass"
-}
+USER_CREDENTIALS = st.secrets["login"]
 
-
-
-#Schedule only if Login
+#Function to make Schedule page appear only after login
 def schedule_page():
     st.title("📆 Weekly Scheduler")
     week_range_label = display_week_selector()
@@ -103,7 +104,7 @@ def schedule_page():
 
 def individual_schedule(name,df):
     # Filter the employee row
-    gc = gspread.service_account(filename='./credentials.json')
+    gc = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
     sheet = gc.open('MyRoti').worksheet('Sheet1')  
     df = get_as_dataframe(sheet)
     employee_row = df[df['Employee'] == name]
@@ -122,10 +123,12 @@ def individual_schedule(name,df):
     gb = GridOptionsBuilder.from_dataframe(week_df)
     gb.configure_column("Task", editable=True, cellEditor='agSelectCellEditor', cellEditorParams={'values': ['Off', 'List', 'Drive', 'List/Drive']})  # sample values
     grid_options = gb.build()
+    gb.configure_default_column(width=110)
 
     grid_response = AgGrid(week_df,
                            gridOptions=grid_options,
                            update_mode=GridUpdateMode.VALUE_CHANGED,
+                           fit_columns_on_grid_load=True,
                            editable=True,
                            height=300)
 
