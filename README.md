@@ -10,3 +10,6 @@ This application contains 4 modules:
 3) user_login.py: Contains the function which handles the user authentication which works on a navigational side bar.
 
 4) main.py: Contains the blend of all functions  mainly "Weekly Schedule". 
+
+
+Note: Please make sure to run pip install -r "requirements.txt"

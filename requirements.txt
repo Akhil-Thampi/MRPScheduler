@@ -1,0 +1,7 @@
+streamlit
+pandas
+gspread
+google.oauth2.service_account
+gspread_dataframe
+datetime
+st_aggrid
