@@ -3,11 +3,9 @@
 # ----------------------------------------Created by: Akhil Thampi-----------------------------------------------------------------------------#
 
 import streamlit as st
-from functions import *
-from user_login import *
+from functions import schedule_page
+from user_login import login
 from test import emp_ind, schedule_summary
-from gspread_dataframe import get_as_dataframe, set_with_dataframe
-
 
 # --- App Title ---
 st.title("BoyzOnSync")
@@ -15,6 +13,10 @@ st.title("BoyzOnSync")
 # --- Always visible: Public pages ---
 schedule_summary()
 emp_ind()
+
+
+if "reload_needed" in st.session_state:
+    del st.session_state.reload_needed
 
 # --- Sidebar login ---
 login()
@@ -25,6 +27,7 @@ if st.session_state.get("logged_in", False):
 else:
     st.warning("🔒 Please log in to access the Weekly Scheduler.")
 
+# --- Footer ---
 st.markdown(
     """
     <style>

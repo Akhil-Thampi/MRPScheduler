@@ -1,5 +1,7 @@
 import streamlit as st
-from functions import *
+
+# --- Credentials (from `st.secrets`) ---
+USER_CREDENTIALS = st.secrets["login"]
 
 def login():
     st.sidebar.title("🔐 Login")
@@ -10,9 +12,7 @@ def login():
     if not st.session_state.logged_in:
         username = st.sidebar.text_input("Username")
         password = st.sidebar.text_input("Password", type="password")
-        login_button = st.sidebar.button("Login")
-
-        if login_button:
+        if st.sidebar.button("Login"):
             if username in USER_CREDENTIALS and USER_CREDENTIALS[username] == password:
                 st.session_state.logged_in = True
                 st.session_state.username = username
@@ -24,5 +24,3 @@ def login():
         if st.sidebar.button("Logout"):
             st.session_state.logged_in = False
             st.session_state.username = ""
-            
-
