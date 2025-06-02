@@ -21,4 +21,4 @@ ENV STREAMLIT_SERVER_PORT=$STREAMLIT_PORT
 EXPOSE $STREAMLIT_PORT
 
 # Run the app
-CMD ["streamlit", "run", "app.py"]
+CMD ["streamlit", "run", "main.py"]
