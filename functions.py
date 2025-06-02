@@ -60,7 +60,7 @@ def display_week_selector():
             st.rerun()
 
     start_date, end_date = get_week_range(st.session_state["week_offset"])
-    # This current_display_range is what the user *sees* in the scheduler
+    # This current_display_range is what the user opens the scheduler
     current_display_range = f"{start_date} to {end_date}"
     with col2:
         st.markdown(f"### Current schedule for 📅 {current_display_range}")
@@ -138,7 +138,7 @@ def remove_employee_from_sheet(sheet_object, employee_name):
         st.error(f"Failed to remove employee: {e}")
         return False
 
-# --- Schedule Page Logic ---
+# --- Schedule Page---
 def schedule_page():
     st.title("📆 Weekly Scheduler & Employee Management")
     client = get_gspread_client()
@@ -184,13 +184,13 @@ def schedule_page():
 
     # --- Weekly Scheduler ---
     st.subheader("Weekly Schedule")
-    # CRITICAL: Get the week range currently displayed by the selector
+    # Get the week range currently displayed by the selector
     current_displayed_week_range = display_week_selector()
     if data:
         dropdown_options = ["List", "Drive", "List/Drive", "Off"]
         df_updated = display_editable_table(data, dropdown_options)
         if not df_updated.empty:
-            # CRITICAL: Pass the current_displayed_week_range to the update function
+            # Pass the current_displayed_week_range to the update function
             confirm_and_update_workflow(df_updated, sheet, current_displayed_week_range)
 
 def get_last_updated_week_range(sheet):
@@ -206,7 +206,7 @@ def get_last_updated_week_range(sheet):
         return "No schedule updated yet."
 
 def schedule_summary():
-    # CRITICAL: Initialize last_updated_week_range to a default message if not present
+    # Initialize last_updated_week_range to a default message if not present
     if "last_updated_week_range" not in st.session_state:
         try:
             client = gspread.service_account_from_dict(st.secrets["gcp_service_account"])
