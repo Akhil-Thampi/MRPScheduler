@@ -1,14 +1,17 @@
-
 # ---------------------------------------------BoyzOnSync-------------------------------------------------------------------------------- #
 # ----------------------------------------Created by: Akhil Thampi-----------------------------------------------------------------------------#
 
 import streamlit as st
-from functions import schedule_page
+from functions import schedule_page,emp_ind, schedule_summary
 from user_login import login
-from test import emp_ind, schedule_summary
 
 # --- App Title ---
 st.title("BoyzOnSync")
+
+# --- Initialize week_offset if not present (for the scheduler) ---
+# last_updated_week_range will be set by schedule_summary function or confirm_and_update_workflow
+if "week_offset" not in st.session_state:
+    st.session_state["week_offset"] = 0
 
 # --- Always visible: Public pages ---
 schedule_summary()
@@ -44,7 +47,7 @@ st.markdown(
     }
     </style>
     <div class="footer">
-        Engineered for MyRotiPlace: Created by: AK96 💥
+        Engineered for MyRotiBoyz: Created by: AK96 💥
     </div>
     """,
     unsafe_allow_html=True
