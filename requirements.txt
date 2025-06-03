@@ -3,5 +3,4 @@ pandas
 gspread
 google-auth
 gspread_dataframe
-datetime
-st_aggrid
+streamlit-aggrid
